@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ajax 1</title>
+</head>
+<body>
+ <div class="" id="result">
+
+ </div>
+<input type="text" id="sem" placeholder="Semester">
+ <button class="" id="get-result1">GET RESULT</button>
+
+ <script>
+
+ let users = []
+
+ document.querySelector('#get-result1').addEventListener('click',(e) => {
+    {
+
+console.log('click heard')
+//Create XHR Object
+
+let xhr = new XMLHttpRequest();
+
+// OPEN // type : GET/POST , URL , ASYNC:true
+
+xhr.open('POST','/getData',true);
+// Sets the request headers for specifying encoded info is send so we need body parser on server side to decode it
+xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+let value = document.querySelector('#sem').value
+
+//Sends the request to server and the values are specied as params
+
+xhr.send(`sem=${value}`);
+
+xhr.onreadystatechange = function() {
+    if(xhr.readyState === 400)
+    {
+        console.log('error has occured');
+    }
+}
+
+//  xhr when loaded ie response is received parse the response as it has been stringfied by the server 
+
+xhr.onload = function () {
+    console.log(xhr.responseText);
+
+    // if no result has been found server responds with NA which is used by client to reveal this
+
+    if(JSON.parse(xhr.response) === 'NA')
+    {
+      
+        document.querySelector('#result').innerHTML='Sorry no results have been found';
+    }
+
+    // incase query matches and data is received put it in users array
+
+    else
+    {
+    users = JSON.parse(xhr.response);
+
+        // show it at screen dynamically 
+
+    ShowData();
+    }
+}
+
+
+}
+ });
+
+function ShowData()
+{
+    document.querySelector('#result').innerHTML=''
+    users.forEach((user)=>{
+        let p = document.createElement('p');
+        p.innerText = `${user.name} sem : ${user.sem} problem : ${user.prob}`;
+        document.querySelector('#result').appendChild(p);
+    })
+}
+ </script>
+</body>
+</html>
